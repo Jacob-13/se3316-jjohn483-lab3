@@ -1,0 +1,22 @@
+{
+  "name": "se3316-jjohn483-lab3",
+  "version": "1.0.0",
+  "description": "\u001b[B\u001b[B",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jacob-13/se3316-jjohn483-lab3.git"
+  },
+  "author": "Jacob Johnstone",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jacob-13/se3316-jjohn483-lab3/issues"
+  },
+  "homepage": "https://github.com/Jacob-13/se3316-jjohn483-lab3#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
