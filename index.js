@@ -2,8 +2,21 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+// List of parts
+const parts = [
+    {id: 100, name: 'Belt', colour: 'brown'},
+    {id: 101, name: 'Clip', colour: 'brown'},
+    {id: 102, name: 'Belt', colour: 'red'},
+    {id: 103, name: 'Hat', colour: 'purple'}
+];
+
+// Setup serving front-end code
+app.use('/', express.static('static'));
+
+// Get list of parts
+app.get('/api/parts', (req, res) => {
+    console.log(`GET requets for ${req.url}`);
+    res.send(parts);
 });
 
 app.listen(port, () => {
