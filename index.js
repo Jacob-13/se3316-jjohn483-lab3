@@ -81,82 +81,6 @@ router.use(express.json());
 app.use(express.json());
 
 
-//-----------------------------------------------------------------------------------------------------------------
-// Routes for /api/parts
-router.route('/') // All the routes to the base prefix
-    // get a list of parts
-    .get((req, res) => {
-        res.send(artistData);
-    })
-    
-    // Create a part
-    .post((req, res) => {
-        const newpart = req.body;
-        newpart.id = 100 + parts.length;
-        if(newpart.name) {
-            parts.push(newpart);
-            res.send(newpart)
-        }
-        else {
-            res.status(400).send('Missing name');
-        }
-    })
-
-router.route('/:id') // All routes with a part ID
-    // Get details for a given part
-    .get((req, res) => {
-        const part = parts.find(p => p.id === parseInt(req.params.id));
-        if(part) {
-            res.send(part);
-        }
-        else {
-            res.status(404).send(`Part ${req.params.id} was not found!`);
-        }
-    })
-    
-    // Create/replace part data for a given ID
-    .put((req, res) => {
-        const newpart = req.body;
-        console.log("Part: ", newpart);
-        // Add ID field
-        newpart.id = parseInt(req.params.id);
-    
-        // Replace the part with the new one
-        const part = parts.findIndex(p => p.id === parseInt(newpart.id));
-        if (part < 0) { // not found
-            console.log('Creating new part');
-            parts.push(newpart);
-        } 
-        else {
-            console.log('Modifying part ', req.params,id);
-            parts[part] = newpart;
-        }
-    
-        res.send(newpart);
-    })
-
-    // Update stock level
-    .post((req, res) => {
-        router.post('/:id', (req, res) => {
-            const newpart = req.body;
-            console.log("Part: ", newpart);
-        
-            // Find the part
-            const part = parts.findIndex(p => p.id === parseInt(req.params.id));
-        
-            if(part < 0) { // Not found
-                res.status(404).send(`Part ${req.params.id} not found`);
-            }
-            else {
-                console.log('Changing stock for ', req.params.id);
-                parts[part].stock += parseInt(req.body.stock); // stock property must exist
-                res.send(parts[part]);
-            }
-        })
-    });
-
-//-------------------------------------------------------------------------------------------------------------------
-
 // Backend functionality 1
 app.get('/api/genres', (req, res) => {
     res.send(genreData);
@@ -256,8 +180,14 @@ app.get('/api/lists/:name', (req, res) => {
 
     let listIndex = playlists.findIndex(l => l.name == listName);
 
-    let track_ids = playlists[listIndex].tracks;
-    res.send(track_ids);
+    if(listIndex < 0) {
+        res.status(404).send(`The list ${listName} was not found`);
+    } 
+    else {
+        let track_ids = playlists[listIndex].tracks;
+        res.send(track_ids);
+    }
+
 });
 
 // Backend functionality 9

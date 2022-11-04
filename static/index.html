@@ -6,20 +6,15 @@
         <link rel="stylesheet" href="style.css"> 
     </head>
     <body>
-        <h1>Music</h1>
-        <div class="intro">
-            <h2>Our Inventory<button id="get-inventory">Reload</button></h2>
-            <ol id="inventory"></ol>
-        </div>
-        <div class="admin">
-            <h2>Manage Inventory</h2>
+        <h1>Jacobs Music App</h1>
+        <div>
+            <h2>Music Search:</h2>
             <span>
-                Name: <input type="text" id="name">
-                Colour: <input type="text" id="colour">
-                Stock: <input type="text" id="stock">
-                <button id="additem">Add</button>
+                Search by Track Title: <input type="text" id="track"><button id="track-search">Search</button>
+                Search by Artist Name: <input type="text" id="artist"><button id="artist-search">Search</button>
+                Search by Album Title: <input type="text" id="album"><button id="album-search">Search</button>
             </span>
-            <span id="status"></span>
+            <ol id="resultsList"></ol>
         </div>
         <script defer src="script.js"></script>
     </body>
