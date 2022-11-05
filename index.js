@@ -2,7 +2,11 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const csv = require('csv-parser');
+const Conf = require('conf');
+const config = new Conf();
+
 const { PassThrough } = require('stream');
+const { type } = require('os');
 const router = express.Router();
 
 const port = 3000;
@@ -121,7 +125,7 @@ app.get('/api/artists/:match', (req, res) => {
 
 // Backend functionality 6
 
-
+/*
 let playlists = [
     {
         name: 'Funk',
@@ -147,9 +151,10 @@ let playlists = [
         totalTracks: 5,
         duration: 5
     }
-];
+];*/
 app.put('/api/lists/:name', (req, res) => {
-    const newList = req.body;
+//-----------------------------------------------------------------------------------------    
+    /*const newList = req.body;
     console.log("List: ", newList);
     
     // id of new list will be the parameter in the url
@@ -165,7 +170,20 @@ app.put('/api/lists/:name', (req, res) => {
     else {
         console.log('List already exists')
         res.status(400).send(`List ${newList.name} already exists!`);
+    }*/
+//-----------------------------------------------------------------------------------------
+
+    const listName = req.params.name;
+    
+    if(config.has(listName)) {
+        res.status(400).send(`${listName} already exists!`);
     }
+    else {
+        config.set(listName, []);
+        res.send(config.get(listName));
+        console.log('list in res');
+    }
+
 });
 
 
@@ -210,8 +228,13 @@ app.delete('/api/lists/:name', (req, res) => {
 
 // Backend functionality 10
 app.get('/api/lists', (req, res) => {
-    let lists = playlists.map(selectProperties('name'));
-    res.send(lists);
+
+    var listData = fs.readFileSync(config.path, 'utf8'); //objects with key as name and tracks as value
+
+    let list = JSON.parse(listData);
+    console.log(list[1]);
+
+    res.send(list);
 });
 
 // Install the router at /api/parts
