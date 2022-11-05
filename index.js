@@ -7,6 +7,7 @@ const config = new Conf();
 
 const { PassThrough } = require('stream');
 const { type } = require('os');
+const e = require('express');
 const router = express.Router();
 
 const port = 3000;
@@ -125,53 +126,7 @@ app.get('/api/artists/:match', (req, res) => {
 
 // Backend functionality 6
 
-/*
-let playlists = [
-    {
-        name: 'Funk',
-        tracks: [
-            {
-                id: 1
-            },
-            {
-                id: 2
-            }],
-        totalTracks: 5,
-        duration: 5 //could create a function that is called by the property
-    },
-    {
-        name: 'Vibes',
-        tracks: [
-            {
-                id: 1
-            },
-            {
-                id: 2
-            }],
-        totalTracks: 5,
-        duration: 5
-    }
-];*/
 app.put('/api/lists/:name', (req, res) => {
-//-----------------------------------------------------------------------------------------    
-    /*const newList = req.body;
-    console.log("List: ", newList);
-    
-    // id of new list will be the parameter in the url
-    //newList.name = req.body.name;
-
-    const listIndex = playlists.findIndex(l => l.name === newList.name);
-
-    if(listIndex < 0) {
-        console.log('Creating new list ... ');
-        playlists.push(newList);
-        res.send(newList);
-    } 
-    else {
-        console.log('List already exists')
-        res.status(400).send(`List ${newList.name} already exists!`);
-    }*/
-//-----------------------------------------------------------------------------------------
 
     const listName = req.params.name;
     
@@ -186,55 +141,107 @@ app.put('/api/lists/:name', (req, res) => {
 
 });
 
-
+// can create route for /api/lists
 // Backend functionality 7
-app.post('api/lists/:id', (req, res) => {
+app.post('/api/lists/:name', (req, res) => {
 
+    const listName = req.params.name;
+    let tracks = []; //dont need this i dont think
+    tracks = req.body.tracks; // in the body create a property called tracks holding a list of tracks
+
+    if(config.has(listName)){
+        config.set(listName, tracks);
+        res.send('tracks added');
+    }
+    else {
+        res.status(404).send(`Playlist ${listName} not found!`);
+    }
 });
 
 // Backend functionality 8
 app.get('/api/lists/:name', (req, res) => {
-    let listName = req.params.name;
 
-    let listIndex = playlists.findIndex(l => l.name == listName);
+    const listName = req.params.name;
 
-    if(listIndex < 0) {
-        res.status(404).send(`The list ${listName} was not found`);
-    } 
-    else {
-        let track_ids = playlists[listIndex].tracks;
-        res.send(track_ids);
+    if(config.has(listName)){
+        res.send(config.get(listName));
     }
+    else {
+        res.status(404).send(`Playlist ${listName} not found!`);
+    }
+    
 
 });
 
 // Backend functionality 9
 app.delete('/api/lists/:name', (req, res) => {
-    let listName = req.params.name;
-
-    let listIndex = playlists.findIndex(p => p.name == listName);
-
-    console.log('here');
     
-    if(listIndex < 0) {
-        res.status(404).send(`List ${listName} was not found!`);
+    const listName = req.params.name;
+
+    if(config.has(listName)){
+        config.delete(listName);
+        res.send(`${listName} was deleted!`);
     }
     else {
-        playlists.splice(listIndex, listIndex + 1);
-        res.send(`List ${listName} deleted`);
+        res.status(404).send(`Playlist ${listName} not found!`)
     }
+
 });
 
 
-// Backend functionality 10
+// Backend functionality 10: use stringify and then split string by commas (each list will be an array element)
 app.get('/api/lists', (req, res) => {
 
+    let allLists = [];
+
+    // Retrieves the data from the config db
     var listData = fs.readFileSync(config.path, 'utf8'); //objects with key as name and tracks as value
-
     let list = JSON.parse(listData);
-    console.log(list[1]);
 
-    res.send(list);
+    // Obtains the names of all the lists
+    let listNames = [];
+    for(var key in list){
+        listNames.push(key);
+    };
+
+    // The following nested operations creates an array of objects with properties for list name, num of tracks, and duration
+    if(listNames.length != 0)
+    {
+        // For each playlist
+        for(i = 0; i < listNames.length; i++)
+        {
+            let trackList = config.get(listNames[i]); // Retrieves the track list from a playlist
+            let duration = 0;
+
+            if(trackList.length != 0)
+            {
+                // For each track
+                for(j = 0; j < trackList.length; j++)
+                {
+                    for(k = 0; k < trackData.length; k++)
+                    {
+                        if(trackData[k].track_id == trackList[j])
+                        {
+                            trackDuration = trackData[k].track_duration;
+                            duration += trackDuration;
+                        };
+                    };
+                };
+            };
+            // New play list object is added to the array of all lists
+            let newPlaylist = {
+                name: listNames[i],
+                num_of_tracks: trackList.length,
+                length: duration
+            };
+            allLists.push(newPlaylist);
+        };
+        res.send(allLists);
+    }
+    else {
+        res.status(400).send('No lists exist yet!');
+    }
+
 });
 
 // Install the router at /api/parts
