@@ -1,15 +1,59 @@
+html {
+    background-color: rgb(40,40,40);
+    color: rgb(200,200,200);
+}
+
+h1, h2 {
+    color: lightcoral;
+}
+
+body {
+    margin: 30px;
+}
+
 h1 {
     text-align: center;
 }
 
+span {
+    display: table;
+    margin: 0 auto;
+}
+
 ol {
     list-style-type: none;
+    overflow-y: scroll;
+    max-height: 245px;
+    width: fit-content;
+    max-width: 80ch;
 }
 
 li {
-    margin: 5px;
+    margin-block: 10px;
+}
+
+.playlist-item {
+    background-color: rgb(60,60,60);
+    color: rgb(225,225,225);
+    border: 3px solid lightcoral;
+    padding: 5px;
+    padding-inline: 20px;
+    border-radius: 25px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 input {
-    width: 10ch;
+    width: 15ch;
+    margin-inline-end: 10px;
+    margin-inline-start: 5px;
+    border-radius: 25px;
+    padding-inline: 10px;
+}
+
+button {
+    margin-inline-end: 10px;
+    border-radius: 25px;
+    font-size: 15px;
 }

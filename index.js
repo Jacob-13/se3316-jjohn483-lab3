@@ -135,10 +135,9 @@ app.put('/api/lists/:name', (req, res) => {
     }
     else {
         config.set(listName, []);
+        console.log(config.get(listName)); //success
         res.send(config.get(listName));
-        console.log('list in res');
     }
-
 });
 
 // can create route for /api/lists
@@ -169,8 +168,6 @@ app.get('/api/lists/:name', (req, res) => {
     else {
         res.status(404).send(`Playlist ${listName} not found!`);
     }
-    
-
 });
 
 // Backend functionality 9
