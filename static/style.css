@@ -1,31 +1,47 @@
 html {
     background-color: rgb(40,40,40);
     color: rgb(200,200,200);
-}
-
-h1, h2 {
-    color: lightcoral;
+    border: 10px solid lightcoral;
+    height: 100%;
 }
 
 body {
-    margin: 30px;
+    margin: 15px;
 }
 
 h1 {
     text-align: center;
 }
 
-span {
-    display: table;
-    margin: 0 auto;
+h1, h2 {
+    color: lightcoral;
 }
 
-ol {
+div {
+    margin: 5px;
+    background-color: rgb(100,100,100);
+}
+
+#search-credentials {
+    display: table;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+#playlist-list {
+    max-width: 50%;
+    width: 40%;
+    float: left;
+    margin-right: 100px;
+    max-height: 30%;
+}
+
+#playlists {
     list-style-type: none;
     overflow-y: scroll;
-    max-height: 245px;
-    width: fit-content;
-    max-width: 80ch;
+    width: auto;
+    display:inline-flexbox;
+    max-height: 300px;
 }
 
 li {
@@ -42,6 +58,12 @@ li {
     text-align: center;
     font-weight: bold;
     font-size: 18px;
+}
+
+#editing-block {
+    max-width: 50%;
+    width: 50%;
+    float:left;
 }
 
 input {

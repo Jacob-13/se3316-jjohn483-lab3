@@ -6,21 +6,23 @@
         <link rel="stylesheet" href="style.css"> 
     </head>
     <body>
-        <h1>Jacobs Music App</h1>
+        <h1>Music App</h1>
         <div>
             <h2>Music Search:</h2>
-            <span>
-                Search by Track Title:<input type="text" id="track"><button id="track-search">Search</button>
-                Search by Artist Name:<input type="text" id="artist"><button id="artist-search">Search</button>
-                Search by Album Title:<input type="text" id="album"><button id="album-search">Search</button>
-            </span>
+                <div id="search-credentials">
+                    Search by Track Title:<input type="text" id="track"><button id="track-search">Search</button>
+                    Search by Artist Name:<input type="text" id="artist"><button id="artist-search">Search</button>
+                    Search by Album Title:<input type="text" id="album"><button id="album-search">Search</button>
+                </div>
             <ol id="resultsList"></ol>
         </div>
         <div id="playlist-forum">
             <h2>Create New Playlist:</h2>
-            Name:<input type="text" id="playlist-name"><button id="new-playlist">Create</button>
+            <div id="name-input">
+                Name:<input type="text" id="playlist-name"><button id="new-playlist">Create</button>
+            </div>
         </div>
-        <div>
+        <div id="playlist-list">
             <h2>Playlists:</h2>
             <ol id="playlists">
                 <li class="playlist-item">Testing Text</li>
@@ -41,6 +43,9 @@
                 <li class="playlist-item">Testing Text</li>
                 <li class="playlist-item">Testing Text</li>
             </ol>
+        </div>
+        <div id="editing-block">
+            <h2>Editing *Playlist Name*</h2>
         </div>
 
         <script defer src="script.js"></script>
