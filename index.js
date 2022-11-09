@@ -92,35 +92,66 @@ app.get('/api/genres', (req, res) => {
 });
 
 // Backend functionality 2
-app.get('/api/artists', (req, res) => {
-    res.send(artistData);
+app.get('/api/artist/:id', (req, res) => {
+    
+    const artistId = req.params.id;
+
+    const artist = artistData.find(art => art.artist_id == artistId);
+    
+    if(artist){
+        res.send(artist);
+    }
+    else {
+        res.status(404).send(`Artist id ${artistId} not found!`);
+    }
 });
 
 // Backend functionality 3
-app.get('/api/tracks', (req, res) => {
-    res.send(trackData);
+app.get('/api/tracks/:id', (req, res) => {
+    const trackId = req.params.id;
+
+    const trackResult = trackData.find(track => track.track_id === trackId);
+    
+    if(trackResult){
+        res.send(trackResult);
+    } else {
+        res.status(404).send(`Track ID ${trackId} not found!`)
+    }
 });
 
-// Backend functionality 4: Only thing is to choose how many matches to send back now
+// Backend functionality 4
 app.get('/api/tracks/:match', (req, res) => {
-    const track = trackData.filter(t => t.track_title == req.params.match || t.album_title == req.params.match);
-    track.length = 5;
-        if(track) {
-            res.send(track);
-        }
-        else {
-            res.status(404).send(`Track ${req.params.match} was not found!`);
-        }
+    
+    const searchValue = req.params.match.toLowerCase();
+    
+    const tracks = trackData.filter(t => t.track_title.toLowerCase().includes(searchValue) || t.album_title.toLowerCase().includes(searchValue));
+    const trackIds = tracks.map(selectProperties('track_id'));
+    
+    if(trackIds.length > 10){
+        trackIds.length = 10;
+        res.send(trackIds);
+    }
+    else if(trackIds.length < 1) {
+        res.status(404).send('No tracks found!');
+    }
+    else{
+        res.send(trackIds);
+    }
 });
 
 // Backend functionality 5
 app.get('/api/artists/:match', (req, res) => {
-    const artist = artistData.filter(artist => artist.artist_name == req.params.match);
-        if(artist) {
-            res.send(artist);
+
+    const artistSearch = req.params.match.toLowerCase();
+
+    const artists = artistData.filter(artist => artist.artist_name.toLowerCase().includes(artistSearch));
+    const artistIds = artists.map(selectProperties('artist_id'));
+
+        if(artistIds.length > 0) {
+            res.send(artistIds);
         }
         else {
-            res.status(404).send(`Artist ${req.params.match} was not found!`);
+            res.status(404).send(`No artist matches were found!`);
         }
 });
 
@@ -135,7 +166,6 @@ app.put('/api/lists/:name', (req, res) => {
     }
     else {
         config.set(listName, []);
-        console.log(config.get(listName)); //success
         res.send(config.get(listName));
     }
 });
@@ -145,12 +175,12 @@ app.put('/api/lists/:name', (req, res) => {
 app.post('/api/lists/:name', (req, res) => {
 
     const listName = req.params.name;
-    let tracks = []; //dont need this i dont think
-    tracks = req.body.tracks; // in the body create a property called tracks holding a list of tracks
+    
+    let tracks = req.body.tracks; // in the body create a property called trackIDs holding a list of trackIDs
 
     if(config.has(listName)){
         config.set(listName, tracks);
-        res.send('tracks added');
+        res.send(config.get(listName));
     }
     else {
         res.status(404).send(`Playlist ${listName} not found!`);
@@ -182,7 +212,6 @@ app.delete('/api/lists/:name', (req, res) => {
     else {
         res.status(404).send(`Playlist ${listName} not found!`)
     }
-
 });
 
 

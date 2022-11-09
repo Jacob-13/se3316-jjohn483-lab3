@@ -58,6 +58,8 @@ li {
     text-align: center;
     font-weight: bold;
     font-size: 18px;
+    float:left;
+    width:70%;
 }
 
 #editing-block {
