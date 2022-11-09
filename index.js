@@ -78,7 +78,7 @@ app.use('/', express.static('static'));
 // Setup middleware to do logging
 app.use((req, res, next) => {
     console.log(`${req.method} request for ${req.url}`);
-    next(); // Keep going
+    next();
 });
 
 // Parse data in body as JSON
@@ -107,10 +107,12 @@ app.get('/api/artist/:id', (req, res) => {
 });
 
 // Backend functionality 3
-app.get('/api/tracks/:id', (req, res) => {
-    const trackId = req.params.id;
+app.get('/api/track/:id', (req, res) => {
+    let trackId = req.params.id;
+    let tempArr = trackId.split('%'); // when being sent spaces are changed to '%'. This changes back to spaces for proper searching
+    trackId = tempArr.join(' ');
 
-    const trackResult = trackData.find(track => track.track_id === trackId);
+    const trackResult = trackData.find(track => track.track_id == trackId);
     
     if(trackResult){
         res.send(trackResult);
@@ -122,10 +124,16 @@ app.get('/api/tracks/:id', (req, res) => {
 // Backend functionality 4
 app.get('/api/tracks/:match', (req, res) => {
     
+    let trackIds = [];
+
     const searchValue = req.params.match.toLowerCase();
     
     const tracks = trackData.filter(t => t.track_title.toLowerCase().includes(searchValue) || t.album_title.toLowerCase().includes(searchValue));
-    const trackIds = tracks.map(selectProperties('track_id'));
+    const trackIdProperties = tracks.map(selectProperties('track_id'));
+
+    trackIdProperties.forEach(track => {
+        trackIds.push(parseInt(track.track_id));
+    })
     
     if(trackIds.length > 10){
         trackIds.length = 10;
@@ -144,8 +152,14 @@ app.get('/api/artists/:match', (req, res) => {
 
     const artistSearch = req.params.match.toLowerCase();
 
+    let artistIds = [];
+
     const artists = artistData.filter(artist => artist.artist_name.toLowerCase().includes(artistSearch));
-    const artistIds = artists.map(selectProperties('artist_id'));
+    const artistProperties = artists.map(selectProperties('artist_id'));
+
+    artistProperties.forEach(artist => {
+        artistIds.push(artist.artist_id);
+    });
 
         if(artistIds.length > 0) {
             res.send(artistIds);

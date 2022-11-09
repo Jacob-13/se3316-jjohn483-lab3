@@ -19,7 +19,6 @@ h1, h2 {
 
 div {
     margin: 5px;
-    background-color: rgb(100,100,100);
 }
 
 #search-credentials {
@@ -80,4 +79,14 @@ button {
     margin-inline-end: 10px;
     border-radius: 25px;
     font-size: 15px;
+}
+
+.delete {
+    margin-block: 10px;
+    float: left;
+    font-size: 18px;
+    padding: 5px;
+    background-color: lightblue;
+    border: 3px solid rgb(60,60,60);
+    color: rgb(60,60,60);
 }
