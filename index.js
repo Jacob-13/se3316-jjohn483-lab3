@@ -99,6 +99,7 @@ app.get('/api/artist/:id', (req, res) => {
     const artist = artistData.find(art => art.artist_id === artistId);
     
     if(artist){
+        console.log(artist);
         res.send(artist);
     }
     else {
@@ -128,6 +129,7 @@ app.get('/api/tracks/:match', (req, res) => {
 
     const searchValue = req.params.match.toLowerCase();
     
+    // looks for matches in both the track title and the ablum title with the corresponding search value
     const tracks = trackData.filter(t => t.track_title.toLowerCase().includes(searchValue) || t.album_title.toLowerCase().includes(searchValue));
     const trackIdProperties = tracks.map(selectProperties('track_id'));
 
@@ -135,6 +137,7 @@ app.get('/api/tracks/:match', (req, res) => {
         trackIds.push(parseInt(track.track_id));
     })
     
+    // limits tracks being sent to the front end to 10
     if(trackIds.length > 10){
         trackIds.length = 10;
         res.send(trackIds);
@@ -142,12 +145,12 @@ app.get('/api/tracks/:match', (req, res) => {
     else if(trackIds.length < 1) {
         res.status(404).send('No tracks found!');
     }
-    else{
+    else{ // sends all track results if there is less than 10
         res.send(trackIds);
     }
 });
 
-// Backend functionality 5
+// Backend functionality 5: matching artists name to the search, responding with list of artist ids
 app.get('/api/artists/:match', (req, res) => {
 
     const artistSearch = req.params.match.toLowerCase();
@@ -188,25 +191,24 @@ app.put('/api/lists/:name', (req, res) => {
     }
 });
 
-// can create route for /api/lists
-// Backend functionality 7
+// Backend functionality 7: Updating tracks for a given list name
 app.post('/api/lists/:name', (req, res) => {
 
     const listName = req.params.name;
     
-    let tracks = req.body.track; // in the body create a property called trackIDs holding a list of trackIDs
+    let tracks = req.body.track; 
     console.log(tracks);
 
     if(config.has(listName)){
-        config.set(listName, tracks); //here
+        config.set(listName, tracks); 
         res.send(config.get(listName));
     }
-    else {
+    else { // if the playlist the user is updating doesnt exist, send 404 error.
         res.status(404).send(`Playlist ${listName} not found!`);
     }
 });
 
-// Backend functionality 8
+// Backend functionality 8: Getting the track ids for a given list name
 app.get('/api/lists/:name', (req, res) => {
 
     const listName = req.params.name;
@@ -219,7 +221,7 @@ app.get('/api/lists/:name', (req, res) => {
     }
 });
 
-// Backend functionality 9
+// Backend functionality 9: Deleting a list
 app.delete('/api/lists/:name', (req, res) => {
     
     const listName = req.params.name;
@@ -234,7 +236,7 @@ app.delete('/api/lists/:name', (req, res) => {
 });
 
 
-// Backend functionality 10: use stringify and then split string by commas (each list will be an array element)
+// Backend functionality 10: 
 app.get('/api/lists', (req, res) => {
 
     let allLists = [];
@@ -249,7 +251,7 @@ app.get('/api/lists', (req, res) => {
         listNames.push(key);
     };
 
-    // The following nested operations creates an array of objects with properties for list name, num of tracks, and duration
+    // The following nested operation creates an array of objects with properties for list name, num of tracks, and duration
     if(listNames.length != 0)
     {
         // For each playlist
@@ -260,7 +262,7 @@ app.get('/api/lists', (req, res) => {
 
             if(trackList.length != 0)
             {
-                // For each track
+                // For each track in a playlist
                 for(j = 0; j < trackList.length; j++)
                 {
                     for(k = 0; k < trackData.length; k++)
@@ -288,7 +290,7 @@ app.get('/api/lists', (req, res) => {
     }
 });
 
-// Install the router at /api/parts
+// Install the router at /api/lists
 app.use('/api/test', router)
 
 app.listen(port, () => {

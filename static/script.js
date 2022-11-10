@@ -1,6 +1,6 @@
 document.getElementById('track-search').addEventListener('click', searchTracks);
 document.getElementById('artist-search').addEventListener('click', searchArtists);
-document.getElementById('album-search').addEventListener('click', searchTracks); // Need to change this? idek man
+document.getElementById('album-search').addEventListener('click', searchTracks);
 document.getElementById('new-track-search').addEventListener('click', newTracks);
 document.getElementById('submitBtn').addEventListener('click', addSelectedTracks);
 document.getElementById('createBtn').addEventListener('click', createPlaylist);
@@ -13,15 +13,6 @@ const tracklist = document.getElementById('tracks');
 let tempNewTracks = [];
 let modifyTracks = [];
 
-/*
-
-    Add an 'add' button to each of the 10 search results on a list. green btn is cool?
-    The add button opens a drop down menu to each of the playlist names.
-    The playlist name selected will have that track added to the playlist.
-    Update the 'Playlists' list.
-
-*/
-
 // Used by other functions to clear a list before dynamically populating it again
 function listClear(list) {
     while(list.firstChild){
@@ -29,7 +20,7 @@ function listClear(list) {
     }
 }
 
-// Called at the end of the script. Loads all previously created playlists into the list
+// Called at the end of the script and at the end of some functions. Loads all previously created playlists into the list
 function loadPlaylists(){
 
     listClear(playlists);
@@ -58,23 +49,25 @@ function loadPlaylists(){
     }));
 }
 
+// Populates the list where user selects tracks to add based on a search
 function newTracks() {
-    //listClear((document.getElementById('new-tracks-list')));
     
+    // Gets search value entered and fetches the routes for 
     const searchValue = document.getElementById('new-list-tracks').value;
 
     const route = '/api/tracks/' + searchValue;
 
     fetch(route)
     .then(res => res.json()
-    .then(tracks => {
+    .then(tracks => { // backend responds with the track ids of those that match the search (up to 10)
         tracks.forEach(trackId => {
             
             const idRoute = '/api/track/' + trackId;
 
             fetch(idRoute)
             .then(res => res.json()
-            .then(selectedTrack => {
+            .then(selectedTrack => { // backend responds with the specific track related to the given track_id
+
                 // create new list item and add a text node containing the track name
                 const newItem = document.createElement('li');
                 newItem.appendChild(document.createTextNode(selectedTrack.track_title));
@@ -82,6 +75,7 @@ function newTracks() {
                 // add check box to each list item
                 const checkBoxes = document.createElement('input');
                 checkBoxes.type = 'checkbox';
+
                 // id of check box = id of track
                 checkBoxes.id = trackId;
 
@@ -95,9 +89,12 @@ function newTracks() {
     }));
 }
 
+// finds the selected tracks and adds them to a temp array, as well as the list containing added tracks
 function addSelectedTracks(){
+
     const listOfTracks = document.getElementById('new-results');
 
+    // iterates the list of tracks, finding the ones that are selected and pushing them to the tempNewTracks array
     for(i = 1; i < listOfTracks.childNodes.length; i++){
         let item = listOfTracks.childNodes[i];
         let itemId = item.lastChild.id;
@@ -111,6 +108,7 @@ function addSelectedTracks(){
 
     const createList = document.getElementById('new-tracks-list');
 
+    // Takes the selected track ids and finds the track title. Adds the title to the creating list
     for(j = 0; j < tempNewTracks.length; j++){
 
         const trackId = tempNewTracks[j];
@@ -131,8 +129,10 @@ function addSelectedTracks(){
 
 }
 
+// Takes the track ids from the array and sends them in the body of a put request
 function createPlaylist(){
 
+    // converts integers to strings
     for(i = 0; i < tempNewTracks; i++){
         tempNewTracks[i] = tempNewTracks[i] + '';
     }
@@ -155,7 +155,7 @@ function createPlaylist(){
     // Sends playlist name as a parameter
     fetch(route, options)
     .then(res => res.json()
-    .then(data => {
+    .then(data => {             // backend responds with the array of track ids for the given list name
         console.log(data);
     }));
     
@@ -230,42 +230,8 @@ function searchArtists() {
         })
     }));
 }
-/*
-// Searching by album title. Called on search button press
-function searchAlbums() {
 
-    // Clears previous search
-    listClear(resultsList);
-
-    // Accesses tracks from the backend and displays resulting tracks to the list
-    const searchValue = document.getElementById('album').value.toLowerCase();
-    fetch('/api/tracks')
-    .then(res => res.json()
-    .then(data => {
-        const tracks = data.filter(track => track.album_title.toLowerCase().includes(searchValue));
-        tracks.forEach(track => {
-            const newItem = document.createElement('li');
-            newItem.appendChild(document.createTextNode(`${track.track_title}\n on ${track.album_title}\n by ${track.artist_name}`));
-            resultsList.appendChild(newItem);
-        })
-    }));
-}*/
-
-// Called when the create button is pressed
-/*function newPlaylist(){
-
-    const searchValue = document.getElementById('playlist-name').value;
-    const route = '/api/lists/' + searchValue;
-
-    // Sends playlist name as a parameter
-    fetch(route, {method: 'PUT'})
-    .then(res => res.json()
-    .then(data => {
-        // re-loads the playlist name to display the new playlist in it
-        loadPlaylists();
-    }));
-}*/
-
+// When a playlist is clicked, this function is called
 function displayPlaylist(list) {
 
     listClear(tracklist); // Clear the list of anything that might be currently displayed
@@ -279,9 +245,9 @@ function displayPlaylist(list) {
 
     const route = '/api/lists/' + playlistName;
     
-    fetch(route) // /api/lists/playlistName
+    fetch(route) 
     .then(res => res.json()
-    .then(tracks => { // data might be an array of track ids
+    .then(tracks => { // backend responds with a list of track ids for the given playlist name
 
         for(i = 0; i < tracks.length; i++){
             const track = tracks[i];
@@ -297,18 +263,13 @@ function displayPlaylist(list) {
                 newItem.appendChild(document.createTextNode(`Song: ${data.track_title}, Artist: ${data.artist_name}, Album: ${data.album_title}, Playtime: ${data.track_duration}`));
                 tracklist.appendChild(newItem);
 
-                const newDelBtn = document.createElement('button');
-                //newDelBtn.id = list.name + 1;
-                newDelBtn.className = 'delete';
-                //newDelBtn.addEventListener('click', deleteTrack);
-                newDelBtn.appendChild(document.createTextNode('Delete'));
             }));
 
         }
     }));
 };
  
-// called on search btn in modify div
+// called on search btn in modify div. Used to update the search results
 function modifySearchResult(){
 
     const searchValue = document.getElementById('modify-track-search').value;
@@ -317,7 +278,7 @@ function modifySearchResult(){
 
     fetch(route)
     .then(res => res.json()
-    .then(tracks => {
+    .then(tracks => {                   // backend responds with a list of track ids that correspond to the search value
         tracks.forEach(trackId => {
             
             const idRoute = '/api/track/' + trackId;
@@ -340,14 +301,15 @@ function modifySearchResult(){
                 const orderedList = document.getElementById('modify-results');
                 orderedList.appendChild(newItem);
             }));
-
         });
     }));
 }
 
+// Used to select the tracks wanted and add them to the selected list as well as the array
 function changeTracks(){
     const listOfTracks = document.getElementById('modify-results');
 
+    // iterates through the resulting tracks from the search. pushes selected ones to an array
     for(i = 1; i < listOfTracks.childNodes.length; i++){
         let item = listOfTracks.childNodes[i];
         let itemId = item.lastChild.id;
@@ -360,6 +322,7 @@ function changeTracks(){
 
     const modifyList = document.getElementById('modified-tracks-list');
 
+    // add the selected items (from array) to the selection list
     for(j = 0; j < modifyTracks.length; j++){
 
         const trackId = modifyTracks[j];
@@ -381,6 +344,7 @@ function changeTracks(){
 
 function replaceTracks(){
 
+    // changes ids to strings
     for(i = 0; i < modifyTracks; i++){
         modifyTracks[i] = modifyTracks[i] + '';
     }
@@ -404,8 +368,8 @@ function replaceTracks(){
     .then(res => res.json()
     .then(updatedList => {  // res = the updated list of tracks
         loadPlaylists();
-        //console.log(updatedList);
     }));
+    
     listClear(document.getElementById('modified-tracks-list'));
     modifyTrackArrReset();
 }
