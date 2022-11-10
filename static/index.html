@@ -19,7 +19,29 @@
         <div id="playlist-forum">
             <h2>Create New Playlist:</h2>
             <div id="name-input">
-                Name:<input type="text" id="playlist-name"><button id="new-playlist">Create</button>
+                Name:<input type="text" id="playlist-name">
+                Search By Track Title:<input type="text" id="new-list-tracks"><button id="new-track-search">Search</button>
+                <div id="new-tracks-block">
+                    <ol id="new-tracks-list">
+                    </ol><button id="createBtn">Create</button>
+                </div>
+                <div>
+                    <ol id="new-results">
+                    </ol><button id="submitBtn">Submit</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h2>Modify Playlist:</h2>
+            <div>
+                Name:<input type="text" id="modify-name">
+                Search By Track Title:<input type="text" id="modify-track-search"><button id="modify-search">Search</button>
+                <div>
+                    <ol id="modified-tracks-list"></ol><button id="modifyBtn">Modify</button>
+                </div>
+                <div>
+                    <ol id="modify-results"></ol><button id="modify-submit">Submit</button>
+                </div>
             </div>
         </div>
         <div id="playlist-list">

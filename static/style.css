@@ -27,6 +27,10 @@ div {
     width: fit-content;
 }
 
+select {
+    margin: 10px;
+}
+
 #playlist-list {
     max-width: 50%;
     width: 40%;

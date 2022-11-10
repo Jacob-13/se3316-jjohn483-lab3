@@ -94,9 +94,9 @@ app.get('/api/genres', (req, res) => {
 // Backend functionality 2
 app.get('/api/artist/:id', (req, res) => {
     
-    const artistId = req.params.id;
+    let artistId = req.params.id;
 
-    const artist = artistData.find(art => art.artist_id == artistId);
+    const artist = artistData.find(art => art.artist_id === artistId);
     
     if(artist){
         res.send(artist);
@@ -175,11 +175,15 @@ app.put('/api/lists/:name', (req, res) => {
 
     const listName = req.params.name;
     
+    let tracks = req.body.track;
+    console.log(tracks);
+
+
     if(config.has(listName)) {
         res.status(400).send(`${listName} already exists!`);
     }
     else {
-        config.set(listName, []);
+        config.set(listName, tracks);
         res.send(config.get(listName));
     }
 });
@@ -190,10 +194,11 @@ app.post('/api/lists/:name', (req, res) => {
 
     const listName = req.params.name;
     
-    let tracks = req.body.tracks; // in the body create a property called trackIDs holding a list of trackIDs
+    let tracks = req.body.track; // in the body create a property called trackIDs holding a list of trackIDs
+    console.log(tracks);
 
     if(config.has(listName)){
-        config.set(listName, tracks);
+        config.set(listName, tracks); //here
         res.send(config.get(listName));
     }
     else {
@@ -281,7 +286,6 @@ app.get('/api/lists', (req, res) => {
     else {
         res.status(400).send('No lists exist yet!');
     }
-
 });
 
 // Install the router at /api/parts
